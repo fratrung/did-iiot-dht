@@ -1,3 +1,6 @@
 [submodule "did_iiot"]
 	path = did_iiot
 	url = https://github.com/fratrung/did-iiot.git
+[submodule "AuthKademlia"]
+	path = AuthKademlia
+	url = https://github.com/fratrung/AuthKademlia.git
