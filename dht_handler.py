@@ -1,9 +1,6 @@
-from AuthKademlia.kademlia.crypto.key_manager import DilithiumKeyManager, KyberKeyManager
-from AuthKademlia.kademlia.network import Server
-from AuthKademlia.kademlia.auth_handler import DIDSignatureVerifierHandler
-from did_iiot.did_iiot.did_iiot import DIDIndustrialIoT
-from did_iiot.did_iiot.did_document import Service, VerificationMethod, DIDDocument
-from AuthKademlia.kademlia.crypto.signature_verifier import SIGNATURE_ALG_LENGHTS
+
+from AuthKademlia.modules import DilithiumKeyManager, KyberKeyManager, Server, DIDSignatureVerifierHandler, SIGNATURE_ALG_LENGTHS
+from did_iiot.modules import DIDIndustrialIoT, Service, VerificationMethod, DIDDocument
 import utils
 import requests
 import time
@@ -95,21 +92,7 @@ class DHTHandler:
             return None
         return self.did_handler.did_document
     
-    
-    #buggata
-    def extract_did_document(self,dht_record):
-        algorithm = dht_record[:12].rstrip(b'\0').decode('utf-8')
-        security_level = algorithm.split("-")[-1]
-        alg_string = algorithm.split("-")[0]
-        
-        signature_length = SIGNATURE_ALG_LENGHTS[alg_string][int(security_level)]
-        raw_did_document = dht_record[12+signature_length:]
-        return raw_did_document
-        
-    
-    
-    
-    #API per la DHT
+
     async def insert_did_document_in_the_DHT(self):
         if self.did_handler is None:
             return None
@@ -166,7 +149,7 @@ class DHTHandler:
         did_document = utils.decode_did_document(raw_did_document)
         address = (did_document['service'][0])['serviceEndpoint']
         
-        #per la verifica della firma nelle VC
+        #Verifies VC's Signature
         var_method = did_document['verificationMethod'][0]
         pub_key_auth_node_jwk = var_method['publicKeyJwk']['x']
         pub_key_auth_node = utils.base64_decode_publickey(pub_key_auth_node_jwk)
@@ -178,20 +161,21 @@ class DHTHandler:
                 response = requests.get(url, params=params)
                 response.raise_for_status() 
                 if response.status_code == 200:
-                    vc = response.json()
+                    jwt_vc = response.json()
                     break
                 print("Risposta ricevuta:", response.json())
             except requests.RequestException as e:
                 print("Errore durante la richiesta:", e)
             time.sleep(20)  
-        
+            
+        vc = jwt_vc['verifiable-credential']
         jwt_array = vc.split(".")
         m = f"{jwt_array[0]}.{jwt_array[1]}".encode('utf-8')
         signature_for_validation = jwt_utils.base64url_decode(jwt_array[2].encode())
         vc_is_valid = self.dilith_key_manager.verify_signature(pub_key_auth_node,m,signature_for_validation,2)
         if vc_is_valid:
             with open("vc.json", "w") as json_file:
-                json.dump(vc, json_file, indent=4)
+                json.dump(jwt_vc, json_file, indent=4)
             print("VC salvato in vc.json")
         else:
             print("Invalid Verifiable Credentials: Invalid Signature")
