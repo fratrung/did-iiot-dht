@@ -115,7 +115,7 @@ if __name__ == "__main__":
         
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
-    loop.run_until_complete(configure_auth_node(auth_node))
+    loop.run_until_complete(configure_auth_node(auth_node,peers))
     # Avvia FastAPI
     uvicorn.run(auth_node_service, host="0.0.0.0", port=5007)
 
