@@ -6,7 +6,6 @@ import jwt.utils as jwt_utils
 import base64
 from AuthKademlia.kademlia.crypto.dilithium.src.dilithium_py.dilithium.default_parameters import Dilithium2
 import json
-import json
 from datetime import datetime, timezone, timedelta
 
 def base64_encode_publickey(pk):
@@ -29,6 +28,11 @@ def decode_did_document(encoded_did_document:bytes):
     did_document = json.loads(json_string)
     return did_document
 
+def get_dilithium_security_level_from_pk(pk):
+    pass
+
+def get_dilithium_security_level_from_sk(sk):
+    pass
     
 def get_dilithium_pub_key_for_did_doc(did,pk,security_level,kid="k0"):
     x = base64_encode_publickey(pk)
@@ -42,8 +46,12 @@ def get_kyber_pub_key_for_did_doc(did,pk,lat,kid="k1"):
     if lat != "Kyber-512" and lat != "Kyber-768" and lat != "Kyber-1024":
         return None
     return KyberPublicJwkey(lat,x)
-
-
+'''
+def create_did_iiot(verificationMethod: list[VerificationMethod],service: list[Service]):
+    did = DIDIndustrialIoT.generate_did_uri()
+    did_document = DIDDocument(id=did,verification_methods=verificationMethod,service=service)
+    return did, did_document
+'''
 def get_signed_did_document_record(did_document: dict,sk: bytes,algorithm:str):
     raw_did_doc_encoded = encode_did_document(did_document)
     alg = algorithm.encode('utf-8')[:12].ljust(12, b'\0')
