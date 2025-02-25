@@ -1,7 +1,7 @@
 import os
 import sys
 
-from AuthKademlia.modules import DilithiumKeyManager, KyberKeyManager, Server, DIDSignatureVerifierHandler, SIGNATURE_ALG_LENGHTS
+from AuthKademlia.modules import DilithiumKeyManager, KyberKeyManager, Server, DIDSignatureVerifierHandler, SIGNATURE_ALG_LENGTHS
 from did_iiot.modules import DIDIndustrialIoT, Service, VerificationMethod, DIDDocument
 import utils
 import requests
@@ -101,7 +101,7 @@ class DHTHandler:
         security_level = algorithm.split("-")[-1]
         alg_string = algorithm.split("-")[0]
         
-        signature_length = SIGNATURE_ALG_LENGHTS[alg_string][int(security_level)]
+        signature_length = SIGNATURE_ALG_LENGTHS[alg_string][int(security_level)]
         raw_did_document = dht_record[12+signature_length:]
         return raw_did_document
         
