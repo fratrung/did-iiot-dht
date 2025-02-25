@@ -106,9 +106,6 @@ class DHTHandler:
         return raw_did_document
         
     
-    
-    
-    #API per la DHT
     async def insert_did_document_in_the_DHT(self):
         if self.did_handler is None:
             return None
