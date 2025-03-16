@@ -1,6 +1,3 @@
-import os
-import sys
-
 from AuthKademlia.modules import DilithiumKeyManager, KyberKeyManager, Server, DIDSignatureVerifierHandler, SIGNATURE_ALG_LENGTHS
 from did_iiot.modules import DIDIndustrialIoT, Service, VerificationMethod, DIDDocument
 import utils
@@ -16,9 +13,7 @@ class DIDIIoTHandler:
         self.did = did
         self.did_document = did_document
         self.did_dir = did_dir
-    
-    def store_did_document():
-        pass
+
     
     def get_did_suffix(self):
         return self.did.split(":")[-1]
@@ -93,17 +88,6 @@ class DHTHandler:
         if not self.did_handler:
             return None
         return self.did_handler.did_document
-    
-    
-    #buggata
-    def extract_did_document(self,dht_record):
-        algorithm = dht_record[:12].rstrip(b'\0').decode('utf-8')
-        security_level = algorithm.split("-")[-1]
-        alg_string = algorithm.split("-")[0]
-        
-        signature_length = SIGNATURE_ALG_LENGTHS[alg_string][int(security_level)]
-        raw_did_document = dht_record[12+signature_length:]
-        return raw_did_document
         
     
     async def insert_did_document_in_the_DHT(self):
@@ -141,15 +125,11 @@ class DHTHandler:
             self.did_handler.did_document = did_document
         
 
-    
-    
     async def get_record_from_DHT(self,key):
         return await self.dht_node.get(key)    
     
     async def start_dht_service(self,port):
-        #----aggiungere la scoperta degli altri nodi attraverso messaggio broadcast
         await self.dht_node.listen(port)
-        #-----se i peers sono presenti allora effettuare il bootstrap a utilizzando IP:port dei nodi che rispondono
         
            
     async def get_vc_from_authoritative_node(self,modbus_operations=None):
@@ -162,7 +142,6 @@ class DHTHandler:
         did_document = utils.decode_did_document(raw_did_document)
         address = (did_document['service'][0])['serviceEndpoint']
         
-        #per la verifica della firma nelle VC
         var_method = did_document['verificationMethod'][0]
         pub_key_auth_node_jwk = var_method['publicKeyJwk']['x']
         pub_key_auth_node = utils.base64_decode_publickey(pub_key_auth_node_jwk)
@@ -179,7 +158,7 @@ class DHTHandler:
                 print("Risposta ricevuta:", response.json())
             except requests.RequestException as e:
                 print("Errore durante la richiesta:", e)
-            time.sleep(20)  
+            time.sleep(5)  
         
         vc = jwt_vc['verifiable-credential']
         jwt_array = vc.split(".")
