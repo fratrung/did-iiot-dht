@@ -8,15 +8,15 @@ from typing import List, Optional
 import uvicorn
 import threading
 
-class AuthoritativeNode(DHTHandler):
+class IssuerNode(DHTHandler):
     
     def __init__(self,dilith_keys_dir="auth_node_keys_dilithium",kyber_keys_dir="auth_node_keys_kyber"):
         super().__init__(dilith_keys_dir,kyber_keys_dir)
         
     
-    def generate_authoritative_node_did_iiot(self,service_endpoint):
+    def generate_issuer_node_did_iiot(self,service_endpoint):
         did = f"did:iiot:vc-issuer"
-        self.generate_did_iiot(id_service="AuthoritativeNode",service_type="vc-issuer",service_endpoint=service_endpoint,did_uri=did)
+        self.generate_did_iiot(id_service="IssuerNode",service_type="vc-issuer",service_endpoint=service_endpoint,did_uri=did)
         
         
     
@@ -33,7 +33,7 @@ class AuthoritativeNode(DHTHandler):
 
 
 auth_node_service = FastAPI()
-auth_node = AuthoritativeNode()
+auth_node = IssuerNode()
 
 
 class VCRequest(BaseModel):
@@ -55,8 +55,8 @@ async def generate_vc(did_sub: str, modbus_operations: Optional[List[str]] = Que
                             
                             
         
-async def configure_auth_node(auth_node: AuthoritativeNode, peers):
-    auth_node.generate_authoritative_node_did_iiot("172.29.0.2:5007")
+async def configure_auth_node(auth_node: IssuerNode, peers):
+    auth_node.generate_issuer_node_did_iiot("172.29.0.2:5007")
     await auth_node.start_dht_service(5000)
 
     while True:
