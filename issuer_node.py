@@ -90,7 +90,7 @@ def conf_auth_node(auth_node,bootstrap_nodes):
     loop.run_until_complete(configure_auth_node(auth_node,bootstrap_nodes))  
 
 if __name__ == "__main__":
-    print("Authoritative Node avviato!")
+    print("Issuer Node started!")
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
 
