@@ -2,7 +2,11 @@
 
 This repository provides a Python library containing core classes and components for building **Self-Sovereign Identity (SSI)** systems that leverage **Decentralized Identifiers (DIDs)**, a **custom Distributed Hash Table (DHT)**, and **post-quantum cryptographic primitives**.
 
-It is intended for use in decentralized and resource-constrained environments such as the Internet of Things (IoT), and serves as a foundation for constructing secure, privacy-preserving identity infrastructures.
+It is intended for use in decentralized and resource-constrained environments such as the Internet of Things (IoT), especially in **Industrial IoT (IIoT)** scenarios, and serves as a foundation for constructing secure, privacy-preserving identity infrastructures.
+
+> **Note:** This repository **does not define a fixed system architecture**, but rather provides reusable **building blocks** that can be integrated into a wide range of SSI-based systems. Some features, like issuer-based authorization, are optional and intended for specific contexts such as industrial environments.
+
+---
 
 ## External Dependencies
 
@@ -12,7 +16,9 @@ It is intended for use in decentralized and resource-constrained environments su
 
 - **Custom DID Method – `did:iiot`**  
   GitHub: [https://github.com/fratrung/did-iiot](https://github.com/fratrung/did-iiot)  
-  A decentralized identifier method tailored for Indistrial IoT environments.
+  A decentralized identifier method tailored for Industrial IoT environments.
+
+---
 
 ## Key Features
 
@@ -20,32 +26,41 @@ It is intended for use in decentralized and resource-constrained environments su
 - Support for **DID Document** creation and validation using **Dilithium** signatures
 - Session key exchange support via the post-quantum **Kyber** algorithm
 - Integration with a **custom DHT** acting as a Verifiable Data Registry
-- Support for **Verifiable Credentials (VCs)** as a decentralized authorization mechanism
-- Built-in discovery of trusted **Issuer Nodes** via DHT lookup
+- Optional support for **Verifiable Credentials (VCs)** as an authorization mechanism
+- Optional discovery and communication with **Issuer Nodes** for credential issuance
 
-## System Architecture Overview
+---
 
-This library supports building SSI systems with the following reference architecture:
+## Usage Scenarios
 
-### 1. DID and DHT Integration
+This library supports multiple architectural approaches depending on your use case:
 
-- Each node generates a unique identifier using the `did:iiot` method.
-- Nodes act as peers in the network and participate in a custom DHT.
-- The DHT only accepts **DID Documents** that are cryptographically signed using the **Dilithium** signature scheme.
-- Each DID Document includes the node’s **public key**, required for verifying identity and establishing secure sessions.
+### 1. **Fully Decentralized SSI**
 
-### 2. Verifiable Credentials for Authorization
+- Nodes exchange and verify identities directly via the DHT
+- No central authority required
+- Useful in peer-to-peer IoT networks or testbeds
 
-- Nodes must request **Verifiable Credentials (VCs)** to be authorized to communicate within the network.
-- A trusted **Issuer Node**, launched manually, handles VC issuance by:
-  - Receiving DID-based requests
-  - Verifying requester identity
-  - Issuing a credential that targets the requester’s `did:iiot`
+## Decentralization Model
 
-### 3. Issuer Node Discovery
+This library supports a **selectively decentralized architecture**:
 
-- The Issuer Node’s information (e.g., IP address, public key) is discoverable by querying the DHT with the key `did:iiot:vc-issuer`.
-- The response includes the Issuer’s **DID Document**, enabling secure and authenticated communication between nodes and the issuer.
+- **Decentralized**:
+  - DID creation and resolution via DHT
+  - Public key distribution and session negotiation
+- **Controlled (optional)**:
+  - Verifiable Credential issuance through an issuer node, for use cases that require authorization policies or regulated onboarding
 
-## Example 
-- Industrial Control System Cyber Range: [https://github.com/fratrung/ICS_Cyber_Range](https://github.com/fratrung/ICS_Cyber_Range)
+---
+
+## Example Integration
+
+- **Industrial Control System Cyber Range**:  
+  [https://github.com/fratrung/ICS_Cyber_Range](https://github.com/fratrung/ICS_Cyber_Range)  
+  A proof-of-concept integration of these components within a simulated IIoT environment.
+
+---
+
+
+
+
