@@ -1,43 +1,48 @@
-# Self-Sovereign Identity System Based on DID and DHT with Post-Quantum Support
+# Python Library for Building Post-Quantum SSI Systems Using DIDs and Custom DHT
 
-This repository contains a Python implementation of a **Self-Sovereign Identity (SSI)** system designed for decentralized and resilient environments such as the Internet of Things (IoT). The system uses a **modified Distributed Hash Table (DHT)** that acts as a **Verifiable Data Registry**.
+This repository provides a Python library containing core classes and components for building **Self-Sovereign Identity (SSI)** systems that leverage **Decentralized Identifiers (DIDs)**, a **custom Distributed Hash Table (DHT)**, and **post-quantum cryptographic primitives**.
+
+It is intended for use in decentralized and resource-constrained environments such as the Internet of Things (IoT), and serves as a foundation for constructing secure, privacy-preserving identity infrastructures.
+
+## External Dependencies
+
+- **Modified DHT Implementation**  
+  GitHub: [https://github.com/fratrung/AuthKademlia](https://github.com/fratrung/AuthKademlia)  
+  A custom DHT designed to store only DID Documents that are signed with the post-quantum **Dilithium** signature scheme.
+
+- **Custom DID Method – `did:IIoT`**  
+  GitHub: [https://github.com/fratrung/did-iiot](https://github.com/fratrung/did-iiot)  
+  A decentralized identifier method tailored for Indistrial IoT environments.
 
 ## Key Features
 
-- **Decentralized Identifiers (DIDs)** based on the `did:IIoT` method
-- **Modified DHT** to store only DID Documents signed with the post-quantum **Dilithium** algorithm
-- **Secure session key exchange** using the post-quantum **Kyber** algorithm
-- **Verifiable Credentials (VCs)** used as authorization to enable node communication
-- **Issuer Node discovery** using its DID Document stored in the DHT
+- Core classes for managing **DIDs** using the `did:IIoT` method
+- Support for **DID Document** creation and validation using **Dilithium** signatures
+- Session key exchange support via the post-quantum **Kyber** algorithm
+- Integration with a **custom DHT** acting as a Verifiable Data Registry
+- Support for **Verifiable Credentials (VCs)** as a decentralized authorization mechanism
+- Built-in discovery of trusted **Issuer Nodes** via DHT lookup
 
-## Architecture
+## System Architecture Overview
 
-### DID and DHT
+This library supports building SSI systems with the following reference architecture:
 
-- Each node in the system has a unique `did:IIoT` identifier and participates as a peer in the DHT network.
-- The DHT is modified to only store **Dilithium-signed** DID Documents, ensuring post-quantum integrity and authenticity.
-- Every node's **public key** is embedded within its DID Document, which is saved in the DHT.
+### 1. DID and DHT Integration
 
-### Verifiable Credentials (VCs)
+- Each node generates a unique identifier using the `did:IIoT` method.
+- Nodes act as peers in the network and participate in a custom DHT.
+- The DHT only accepts **DID Documents** that are cryptographically signed using the **Dilithium** signature scheme.
+- Each DID Document includes the node’s **public key**, required for verifying identity and establishing secure sessions.
 
-- To communicate with other nodes, each participant must first obtain **authorization credentials** in the form of VCs.
-- These credentials are issued by a manually initialized **Issuer Node**, which:
-  - Receives and verifies DID-based requests
-  - Issues a VC targeting the requester's `did:IIoT`
+### 2. Verifiable Credentials for Authorization
 
-### Issuer Node Discovery
+- Nodes must request **Verifiable Credentials (VCs)** to be authorized to communicate within the network.
+- A trusted **Issuer Node**, launched manually, handles VC issuance by:
+  - Receiving DID-based requests
+  - Verifying requester identity
+  - Issuing a credential that targets the requester’s `did:IIoT`
 
-- The IP address and public keys of the Issuer Node are discoverable via a DHT query.
-- Nodes can retrieve this information by querying the DHT with the key `did:IIoT:vc-issuer` to obtain the Issuer’s DID Document, which includes the required metadata to initiate communication and request credentials.
+### 3. Issuer Node Discovery
 
-## Technologies Used
-
-- **Python**: Main programming language
-- **Dilithium**: Post-quantum digital signature algorithm for DID Document integrity
-- **Kyber**: Post-quantum algorithm for secure key exchange
-- **Custom DHT**: Modified to support secure and verified DID Document storage
-
-## Getting Started
-
-(*This section can be expanded with installation steps, usage examples, and requirements.*)
-
+- The Issuer Node’s information (e.g., IP address, public key) is discoverable by querying the DHT with the key `did:IIoT:vc-issuer`.
+- The response includes the Issuer’s **DID Document**, enabling secure and authenticated communication between nodes and the issuer.
