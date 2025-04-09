@@ -46,3 +46,6 @@ This library supports building SSI systems with the following reference architec
 
 - The Issuer Node’s information (e.g., IP address, public key) is discoverable by querying the DHT with the key `did:iiot:vc-issuer`.
 - The response includes the Issuer’s **DID Document**, enabling secure and authenticated communication between nodes and the issuer.
+
+## Example 
+- Industrial Control System Cyber Range: [https://github.com/fratrung/ICS_Cyber_Range](https://github.com/fratrung/ICS_Cyber_Range)
