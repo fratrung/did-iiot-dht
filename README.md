@@ -14,7 +14,7 @@ It is intended for use in decentralized and resource-constrained environments su
   GitHub: [https://github.com/fratrung/AuthKademlia](https://github.com/fratrung/AuthKademlia)  
   A custom DHT designed to store only DID Documents that are signed with the post-quantum **Dilithium** signature scheme.
 
-- ** DID-IIoT Method **
+- **DID-IIoT Method**
   GitHub: [https://github.com/fratrung/did-iiot](https://github.com/fratrung/did-iiot)  
   A decentralized identifier method tailored for Industrial IoT environments.
 
