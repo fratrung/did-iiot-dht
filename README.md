@@ -25,7 +25,7 @@ It is intended for use in decentralized and resource-constrained environments su
 - Core classes for managing **DIDs** using the `did:iiot` method
 - Support for **DID Document** creation and validation using **Dilithium** signatures
 - Session key exchange support via the post-quantum **Kyber** algorithm
-- Integration with a **custom DHT** acting as a Verifiable Data Registry
+- Integration with a **custom DHT** acting as a Verifiable Data Registry for storing verifiable DID Document
 - (Optional) support for **Verifiable Credentials (VCs)** as an authorization mechanism
 - (Optional) discovery and communication with **Issuer Nodes** for credential issuance
 
