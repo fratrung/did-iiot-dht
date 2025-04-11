@@ -31,16 +31,6 @@ It is intended for use in decentralized and resource-constrained environments su
 
 ---
 
-## Usage Scenarios
-
-This library supports multiple architectural approaches depending on your use case:
-
-### 1. **Fully Decentralized SSI**
-
-- Nodes exchange and verify identities directly via the DHT
-- No central authority required
-- Useful in peer-to-peer IoT networks or testbeds
-
 ## Decentralization Model
 
 This library supports a **selectively decentralized architecture**:
@@ -49,8 +39,7 @@ This library supports a **selectively decentralized architecture**:
   - DID creation and resolution via DHT
   - Public key distribution and session negotiation
 - **Controlled (optional)**:
-  - Verifiable Credential issuance through an issuer node, for use cases that require authorization policies or regulated onboarding
-
+  - Verifiable Credential issuance through an issuer node, for use cases that require authorization policies or regulated onboarding and for manually access control of device in the network 
 ---
 
 ## Example Integration
