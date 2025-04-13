@@ -4,7 +4,6 @@ This repository provides a Python library containing core classes and components
 
 It is intended for use in decentralized and resource-constrained environments such as the Internet of Things (IoT), especially in **Industrial IoT (IIoT)** scenarios, and serves as a foundation for constructing secure, privacy-preserving identity infrastructures.
 
-> **Note:** This repository **does not define a fixed system architecture**, but rather provides reusable **building blocks** that can be integrated into a wide range of SSI-based systems. Some features, like issuer-based authorization, are optional and intended for specific contexts such as industrial environments.
 
 ---
 
