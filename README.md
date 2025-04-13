@@ -30,7 +30,7 @@ It is intended for use in decentralized and resource-constrained environments su
 
 ---
 
-## Decentralization Model
+## Decentralized Model
 
 This library supports a **selectively decentralized architecture**:
 
