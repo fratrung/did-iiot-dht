@@ -128,13 +128,20 @@ class DHTHandler:
     async def get_record_from_DHT(self,key):
         return await self.dht_node.get(key)    
     
-    async def revoke_did_iiot(self):
-        delete_msg ="delete-did"
+    async def revoke_did_iiot(self) -> bool:
+        delete_msg =b"delete-did"
         dilith_priv_key = self.dilith_key_manager.get_private_key("k0")
-        auth_signature = self.dilith_key_manager.sign(dilith_priv_key,delete_msg)
+        auth_signature = self.dilith_key_manager.sign(dilith_priv_key,delete_msg,2)
         key = self.did_handler.did.split(":")[-1]
-        return await self.dht_node.delete(key,auth_signature,delete_msg) 
-    
+        result = await self.dht_node.delete(key,auth_signature,delete_msg) 
+        if not result:
+            print(f"Revoke operation failed! result: {result}")
+            return False
+        self.did_handler.did = None
+        self.did_handler.did_document = None
+        return True
+        
+                    
     async def start_dht_service(self,port):
         await self.dht_node.listen(port)
         

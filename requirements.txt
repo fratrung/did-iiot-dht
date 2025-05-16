@@ -3,3 +3,6 @@ pydantic
 uvicorn
 PyJWT
 requests
+umsgpack
+pycryptodome
+cryptography
