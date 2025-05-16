@@ -133,7 +133,7 @@ class DHTHandler:
         dilith_priv_key = self.dilith_key_manager.get_private_key("k0")
         auth_signature = self.dilith_key_manager.sign(dilith_priv_key,delete_msg)
         key = self.did_handler.did.split(":")[-1]
-        return await self.dht_node.delete(key,auth_signature,delete_msg) # non funzionerà perchè bisogna modificare l'API delete() di AuthKademlia 
+        return await self.dht_node.delete(key,auth_signature,delete_msg) 
     
     async def start_dht_service(self,port):
         await self.dht_node.listen(port)
