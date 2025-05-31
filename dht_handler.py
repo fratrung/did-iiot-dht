@@ -120,8 +120,8 @@ class DHTHandler:
         if update_success:
             self.dilith_key_manager.store_private_key(key_name="k0",private_key=new_sk)
             self.dilith_key_manager.store_public_key(key_name="k0",public_key=new_pk)
-            self.kyber_key_manager.store_private_key(key_name="k0",private_key=new_kyber_sk)
-            self.kyber_key_manager.store_public_key(key_name="k0",public_key=new_kyber_pk)
+            self.kyber_key_manager.store_private_key(key_name="k1",private_key=new_kyber_sk)
+            self.kyber_key_manager.store_public_key(key_name="k1",public_key=new_kyber_pk)
             self.did_handler.did_document = did_document
         
 
