@@ -1,11 +1,13 @@
 from AuthKademlia.modules import DilithiumKeyManager, KyberKeyManager, Server, DIDSignatureVerifierHandler, SIGNATURE_ALG_LENGTHS
 from did_iiot.modules import DIDIndustrialIoT, Service, VerificationMethod, DIDDocument
 import utils
-import requests
-import time
 import json
 from jwt import utils as jwt_utils
-
+import hashlib
+from pathlib import Path
+import base64
+import asyncio 
+import httpx
 
 class DIDIIoTHandler:
     
@@ -60,6 +62,17 @@ class DHTHandler:
         new_kyber_sk = self.kyber_key_manager.get_private_key("new-k1")
         return old_sk, new_sk, new_pk, new_kyber_pk, new_kyber_sk
     
+    def _load_iss_pub_key(self):
+        key_path = Path(__file__).resolve().parent.parent / "issuer_node_public_key.txt"
+        try:
+            with open(key_path, "rb") as f:
+                return f.read()
+        except FileNotFoundError:
+            print(f"[ERRORE] File non trovato: {key_path}")
+            return None
+        except Exception as e:
+            print(f"[ERRORE] Errore durante la lettura della chiave pubblica: {e}")
+            return None
     
     def generate_did_iiot(self,id_service,service_type,service_endpoint,did_uri=None,):
         self._generate_dilithium_and_kyber_keypairs()
@@ -88,7 +101,6 @@ class DHTHandler:
         if not self.did_handler:
             return None
         return self.did_handler.did_document
-        
     
     async def insert_did_document_in_the_DHT(self):
         if self.did_handler is None:
@@ -115,14 +127,47 @@ class DHTHandler:
         value = utils.get_signed_did_document_record(did_document,new_sk,algorithm="Dilithium-2")
         auth_signature = self.dilith_key_manager.sign(old_sk,value,2)
         
+        pub_key_auth_node = self._load_iss_pub_key()
+        address = "172.29.0.2:5007"
+        url = f"http://{address}/update-vc"
+        payload = {
+            "auth_signature": base64.urlsafe_b64encode(auth_signature).decode(),
+            "key": key,
+            "value": base64.urlsafe_b64encode(value).decode()
+        }
+        print(f"Payload della key rotation request: {payload}")
+        async with httpx.AsyncClient(timeout=10.0) as async_client:
+            try:
+                response = await async_client.post(url,json=payload)
+            except httpx.RequestError as err:
+                print(f"[Log Key Rotation] Http error: {err}")
+                return False
+            if response.status_code != 200:
+                print(f"[Log Key Rotation] Status response: {response.status_code}: {response.text}")
+                return False
+        new_jwt_vc = response.json()
+        new_vc = new_jwt_vc['verifiable-credential']
+        vc_array = new_vc.split(".")
+        m = f"{vc_array[0]}.{vc_array[1]}".encode('utf-8')
+        signature_for_validation = jwt_utils.base64url_decode(vc_array[2].encode())
+        vc_is_valid = self.dilith_key_manager.verify_signature(pub_key_auth_node,m,signature_for_validation,2)
+        if vc_is_valid:
+            with open("vc.json", "w") as vc_file:
+                json.dump(new_jwt_vc,vc_file,indent=4)
+            print("Success")
+        else:
+            print("Invalid Verifiable Credential: Invalid Signature")
+            return False
+        
         update_success = await self.dht_node.update(key=key,value=value,auth_signature=auth_signature)
-    
+
         if update_success:
             self.dilith_key_manager.store_private_key(key_name="k0",private_key=new_sk)
             self.dilith_key_manager.store_public_key(key_name="k0",public_key=new_pk)
             self.kyber_key_manager.store_private_key(key_name="k1",private_key=new_kyber_sk)
             self.kyber_key_manager.store_public_key(key_name="k1",public_key=new_kyber_pk)
             self.did_handler.did_document = did_document
+            return True
         
 
     async def get_record_from_DHT(self,key):
@@ -147,33 +192,39 @@ class DHTHandler:
         
            
     async def get_vc_from_authoritative_node(self,modbus_operations=None):
+        pub_key_auth_node = self._load_iss_pub_key() # Load Issuer Node public key embedded on the firmware
         did = self.did_handler.did
-        did_auth_node = "did:iiot:vc-issuer"
-        result = await self.dht_node.get(key=utils.extract_did_suffix(did_auth_node))
+        did_auth_node = "did:iiot:status-list"
+        result = await self.dht_node.get(key=did_auth_node)
         if not result:
             return None
         raw_did_document = result[12+2420:]
         did_document = utils.decode_did_document(raw_did_document)
         address = (did_document['service'][0])['serviceEndpoint']
-        
-        var_method = did_document['verificationMethod'][0]
-        pub_key_auth_node_jwk = var_method['publicKeyJwk']['x']
-        pub_key_auth_node = utils.base64_decode_publickey(pub_key_auth_node_jwk)
-        
-        while True:
-            url = f"http://{address}/get-vc"
-            params = {"did_sub":did,"modbus_operations":modbus_operations}
-            try:
-                response = requests.get(url, params=params)
-                response.raise_for_status() 
-                if response.status_code == 200:
-                    jwt_vc = response.json()
-                    break
-                print("Risposta ricevuta:", response.json())
-            except requests.RequestException as e:
-                print("Errore durante la richiesta:", e)
-            time.sleep(5)  
-        
+        hashed_pub_key = hashlib.sha256(self.dilith_key_manager.get_public_key('k0')).digest()
+        hashed_pub_key_b64 = base64.urlsafe_b64encode(hashed_pub_key).decode()
+        async with httpx.AsyncClient(timeout=10.0) as client:
+            max_retries = 6
+            for attempt in range(max_retries):
+                url = f"http://{address}/get-vc"
+                params = {
+                    "did_sub": self.did_handler.did,
+                    "pub_key_hashed_b64": hashed_pub_key_b64,
+                    "modbus_operations": modbus_operations or [],
+                }
+                try:
+                    resp = await client.get(url, params=params)
+                    if resp.status_code == 200:
+                        jwt_vc = resp.json()
+                        break
+                    print(f"[Log] Response {resp.status_code}: {resp.text}")
+                except httpx.RequestError as e:
+                    print(f"[Log] Network Error: {e}")
+                await asyncio.sleep(5.0)
+            else:
+                print("[TESTER] Timeout polling /get-vc")
+                return None
+            
         vc = jwt_vc['verifiable-credential']
         jwt_array = vc.split(".")
         m = f"{jwt_array[0]}.{jwt_array[1]}".encode('utf-8')
@@ -182,7 +233,6 @@ class DHTHandler:
         if vc_is_valid:
             with open("vc.json", "w") as json_file:
                 json.dump(jwt_vc, json_file, indent=4)
-            print("VC salvato in vc.json")
         else:
             print("Invalid Verifiable Credentials: Invalid Signature")
 
