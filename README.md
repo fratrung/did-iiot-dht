@@ -1,6 +1,6 @@
 # Framework for Building Post-Quantum SSI System Using DIDs and Custom DHT
 
-This repository provides a Python library containing core classes and components for building **Self-Sovereign Identity (SSI)** systems that leverage **Decentralized Identifiers (DIDs)**, a **custom Distributed Hash Table (DHT)**, and **post-quantum cryptographic primitives**.
+This framework provides a Python library containing core classes and components for building **Self-Sovereign Identity (SSI)** systems that leverage **Decentralized Identifiers (DIDs)**, a **custom Distributed Hash Table (DHT)**, and **post-quantum cryptographic primitives**.
 
 It is intended for use in decentralized and resource-constrained environments such as the Internet of Things (IoT), especially in **Industrial IoT (IIoT)** scenarios, and serves as a foundation for constructing secure, privacy-preserving identity infrastructures.
 
