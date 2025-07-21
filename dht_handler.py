@@ -68,10 +68,10 @@ class DHTHandler:
             with open(key_path, "rb") as f:
                 return f.read()
         except FileNotFoundError:
-            print(f"[ERRORE] File non trovato: {key_path}")
+            print(f"[ERRORE] File not found: {key_path}")
             return None
         except Exception as e:
-            print(f"[ERRORE] Errore durante la lettura della chiave pubblica: {e}")
+            print(f"[ERRORE] parsing error: {e}")
             return None
     
     def generate_did_iiot(self,id_service,service_type,service_endpoint,did_uri=None,):
