@@ -135,7 +135,7 @@ class DHTHandler:
             "key": key,
             "value": base64.urlsafe_b64encode(value).decode()
         }
-        print(f"Payload della key rotation request: {payload}")
+        print(f"Payload key rotation request: {payload}")
         async with httpx.AsyncClient(timeout=10.0) as async_client:
             try:
                 response = await async_client.post(url,json=payload)
