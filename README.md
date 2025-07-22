@@ -9,15 +9,13 @@ It is intended for use in decentralized and resource-constrained environments su
 
 ## External Dependencies
 
-- **Modified DHT Implementation**  
-  GitHub: [https://github.com/fratrung/AuthKademlia](https://github.com/fratrung/AuthKademlia)  
+- **Modified DHT Implementation**:[https://github.com/fratrung/AuthKademlia](https://github.com/fratrung/AuthKademlia)  
   A custom DHT designed to store only DID Documents that are signed with the post-quantum **Dilithium** signature scheme.
 
-- **DID-IIoT Method** : [https://github.com/fratrung/did-iiot](https://github.com/fratrung/did-iiot)  
+- **DID-IIoT Method**: [https://github.com/fratrung/did-iiot](https://github.com/fratrung/did-iiot)  
   A decentralized identifier method tailored for Industrial IoT environments.
 - **Dilithium (Post-Quantum Signature Scheme)**
-Implementation of the CRYSTALS-Dilithium algorithm for digital signatures, used to sign and verify DID Documents.
-Reference: https://github.com/GiacomoPope/dilithium-py
+Implementation of the CRYSTALS-Dilithium algorithm for digital signatures, used to sign and verify DID Documents: https://github.com/GiacomoPope/dilithium-py
 - **Kyber (Post-Quantum Key Encapsulation)**
 Implementation of the CRYSTALS-Kyber algorithm for secure session key exchange.
 Reference: https://github.com/GiacomoPope/kyber-py
