@@ -1,56 +1,71 @@
-# Framework for Building Post-Quantum SSI System Using DIDs and Custom DHT
+# did-iiot-dht
 
-This framework provides a Python library containing core classes and components for building **Self-Sovereign Identity (SSI)** systems that leverage **Decentralized Identifiers (DIDs)**, a **custom Distributed Hash Table (DHT)**, and **post-quantum cryptographic primitives**.
+A Python framework for building **Post-Quantum Self-Sovereign Identity (SSI)** systems using **Decentralized Identifiers (DIDs)**, a cryptographically extended **Distributed Hash Table (DHT)**, and **post-quantum cryptographic primitives**.
 
-It is intended for use in decentralized and resource-constrained environments such as the Internet of Things (IoT), especially in **Industrial IoT (IIoT)** scenarios, and serves as a foundation for constructing secure, privacy-preserving identity infrastructures.
+Designed for decentralized and resource-constrained environments — with a primary focus on **Industrial IoT (IIoT)** — this library provides the foundational building blocks for constructing secure, privacy-preserving, and sovereign identity infrastructures without reliance on any central authority.
 
+-----
 
----
+## Overview
 
-## External Dependencies
+This framework integrates three core pillars:
 
-- **Modified DHT Implementation**:[https://github.com/fratrung/AuthKademlia](https://github.com/fratrung/AuthKademlia)  
-  A custom DHT designed to store only DID Documents that are signed with the post-quantum **Dilithium** signature scheme.
+- **Post-quantum cryptography** (Dilithium for signatures, Kyber for key encapsulation) to ensure long-term security against quantum adversaries
+- **Decentralized Identifiers** following the `did:iiot` method, tailored for constrained industrial environments
+- **A custom DHT** acting as a Verifiable Data Registry (VDR), where only cryptographically signed DID Documents are accepted and stored
 
-- **DID-IIoT Method**: [https://github.com/fratrung/did-iiot](https://github.com/fratrung/did-iiot)  
-  A decentralized identifier method tailored for Industrial IoT environments.
-- **Dilithium (Post-Quantum Signature Scheme)**
-Implementation of the CRYSTALS-Dilithium algorithm for digital signatures, used to sign and verify DID Documents: https://github.com/GiacomoPope/dilithium-py
-- **Kyber (Post-Quantum Key Encapsulation)**
-Implementation of the CRYSTALS-Kyber algorithm for secure session key exchange.
-Reference: https://github.com/GiacomoPope/kyber-py
----
+The result is a fully decentralized identity layer that devices can use to authenticate, exchange session keys, and optionally obtain Verifiable Credentials — all without a trusted intermediary.
+
+-----
 
 ## Key Features
 
-- Core classes for managing **DIDs** using the `did:iiot` method
-- Support for **DID Document** creation and validation using **Dilithium** signatures
-- Session key exchange support via the post-quantum **Kyber** algorithm
-- Integration with a **custom DHT** acting as a Verifiable Data Registry for storing verifiable DID Document
-- (Optional) support for **Verifiable Credentials (VCs)** as an authorization mechanism
-- (Optional) discovery and communication with **Issuer Nodes** for credential issuance
+- Core classes for **DID lifecycle management** using the `did:iiot` method
+- **DID Document** creation and validation with post-quantum Dilithium signatures
+- Secure session key exchange via post-quantum **Kyber** key encapsulation
+- Integration with a **custom DHT** acting as a Verifiable Data Registry (VDR)
+- *(Optional)* **Verifiable Credential (VC)** support as a flexible authorization mechanism
+- *(Optional)* Discovery and communication with **Issuer Nodes** for regulated device onboarding
 
----
+-----
 
-## Decentralized Model
+## Decentralized Architecture
 
-This library supports a **selectively decentralized architecture**:
+This framework supports a **selectively decentralized model**, separating concerns between fully decentralized operations and optional controlled ones:
 
-- **Decentralized**:
-  - DID creation and resolution via DHT
-  - Public key distribution and session negotiation
-- **Controlled (optional)**:
-  - Verifiable Credential issuance through an issuer node, for use cases that require authorization policies or regulated onboarding and for manually access control of device in the network 
----
+|Layer                    |Mode                   |Description                                                                    |
+|-------------------------|-----------------------|-------------------------------------------------------------------------------|
+|DID creation & resolution|Decentralized          |Operated entirely via DHT, no central registry                                 |
+|Public key distribution  |Decentralized          |Embedded in DID Documents stored on the DHT                                    |
+|Session key negotiation  |Decentralized          |Peer-to-peer via Kyber KEM                                                     |
+|Credential issuance      |Controlled *(optional)*|Delegated to an Issuer Node for regulated onboarding or access control policies|
+
+This design allows the framework to be deployed in fully open environments as well as in scenarios requiring explicit authorization of devices joining the network.
+
+-----
+
+## External Dependencies
+
+|Library         |Purpose                                                |Repository                                                             |
+|----------------|-------------------------------------------------------|-----------------------------------------------------------------------|
+|**AuthKademlia**|Custom DHT — stores only Dilithium-signed DID Documents|[fratrung/AuthKademlia](https://github.com/fratrung/AuthKademlia)      |
+|**did:iiot**    |DID method for Industrial IoT environments             |[fratrung/did-iiot](https://github.com/fratrung/did-iiot)              |
+|**dilithium-py**|CRYSTALS-Dilithium post-quantum signature scheme       |[GiacomoPope/dilithium-py](https://github.com/GiacomoPope/dilithium-py)|
+|**kyber-py**    |CRYSTALS-Kyber post-quantum key encapsulation          |[GiacomoPope/kyber-py](https://github.com/GiacomoPope/kyber-py)        |
+
+-----
 
 ## Example Integration
 
-- **Industrial Control System Cyber Range**:  
-  [https://github.com/fratrung/ICS_Cyber_Range](https://github.com/fratrung/ICS_Cyber_Range)  
-  A proof-of-concept integration of these components within a simulated IIoT environment.
+**Industrial Control System Cyber Range** — [fratrung/ICS_Cyber_Range](https://github.com/fratrung/ICS_Cyber_Range)
 
----
+A proof-of-concept deployment of this framework within a simulated IIoT environment, demonstrating end-to-end identity management, device authentication, and secure session establishment across industrial control system components.
 
+-----
 
+## Related Projects
 
-
+- [AuthKademlia](https://github.com/fratrung/AuthKademlia) — Python DHT with signed record support
+- [AuthKademlia-RS](https://github.com/fratrung/auth_kademlia) — Rust reimplementation of AuthKademlia
+- [did:iiot](https://github.com/fratrung/did-iiot) — DID method specification and implementation
+- [ICS_Cyber_Range](https://github.com/fratrung/ICS_Cyber_Range) — Full integration reference
