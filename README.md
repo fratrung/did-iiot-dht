@@ -66,6 +66,6 @@ A proof-of-concept deployment of this framework within a simulated IIoT environm
 ## Related Projects
 
 - [AuthKademlia](https://github.com/fratrung/AuthKademlia) — Python DHT with signed record support
-- [AuthKademlia-RS](https://github.com/fratrung/auth_kademlia) — Rust reimplementation of AuthKademlia
+- [AuthKademlia-RS](https://github.com/fratrung/auth-kademlia-rs) — Rust reimplementation of AuthKademlia
 - [did:iiot](https://github.com/fratrung/did-iiot) — DID method specification and implementation
 - [ICS_Cyber_Range](https://github.com/fratrung/ICS_Cyber_Range) — Full integration reference
