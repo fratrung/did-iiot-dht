@@ -7,3 +7,6 @@ umsgpack
 pycryptodome
 cryptography
 httpx
+maturin
+pytest
+pytest-asyncio

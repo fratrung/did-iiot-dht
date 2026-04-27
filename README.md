@@ -44,6 +44,53 @@ This design allows the framework to be deployed in fully open environments as we
 
 -----
 
+## Installation
+
+### Python dependencies
+
+```bash
+git clone --recurse-submodules <repo-url>
+cd did-iiot-dht
+python -m venv .env
+source .env/bin/activate
+pip install -r requirements.txt
+```
+
+### Rust binding (authkademlia_py) — required for `RustDHTHandler`
+
+`RustDHTHandler` uses a native Python extension built from the `auth-kademlia-rs` submodule.
+You need [Rust](https://rustup.rs/) and `maturin` installed (`pip install maturin`).
+
+**Option A — development install** (installs directly into the active virtualenv, no wheel file needed):
+
+```bash
+cd auth-kademlia-rs
+maturin develop --features python
+cd ..
+```
+
+**Option B — build a wheel and install it**:
+
+```bash
+cd auth-kademlia-rs
+maturin build --features python --release
+# maturin prints the wheel path, e.g.:
+#   📦 Built wheel to auth-kademlia-rs/target/wheels/authkademlia_rs-0.1.0-cp312-cp312-linux_x86_64.whl
+pip install target/wheels/authkademlia_rs-*.whl
+cd ..
+```
+
+After either option, verify the install:
+
+```bash
+python -c "import authkademlia_py; print('OK')"
+```
+
+> **Note:** `--features python` is mandatory — without it the Rust crate builds
+> as a plain library with no Python surface.
+
+-----
+
 ## External Dependencies
 
 |Library         |Purpose                                                |Repository                                                             |

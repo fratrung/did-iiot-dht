@@ -4,3 +4,6 @@
 [submodule "AuthKademlia"]
 	path = AuthKademlia
 	url = https://github.com/fratrung/AuthKademlia.git
+[submodule "auth-kademlia-rs"]
+	path = auth-kademlia-rs
+	url = https://github.com/fratrung/auth-kademlia-rs.git
