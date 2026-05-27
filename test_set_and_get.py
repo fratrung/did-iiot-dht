@@ -19,7 +19,8 @@ Wire record format reminder:
 import asyncio
 import pytest
 import logging
-from dht_handler import DHTHandler, RustDHTHandler
+from dht_handler import DHTHandler
+from rust_dht_handler import RustDHTHandler
 import utils
 
 
@@ -290,12 +291,12 @@ async def test_did_generation_and_retrieval_simple():
         return False
     finally:
         logger.info("=== Cleaning up ===")
-        node_a.dht_node.stop()
-        node_b.dht_node.stop()
+        await node_a.dht_node.stop()
+        await node_b.dht_node.stop()
 
 
 if __name__ == "__main__":
     # Run simple test directly
-    print("Starting DHT test: Two nodes, DID generation and retrieval\n")
+    print("Starting DHT test using RustDHTHandler: Two nodes, DID generation and retrieval\n")
     result = asyncio.run(test_did_generation_and_retrieval_simple())
     exit(0 if result else 1)

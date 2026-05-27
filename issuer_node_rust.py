@@ -26,7 +26,7 @@ HTTP endpoints:
     GET  /debug-status-list Return the current status list from the DHT (debug only).
 """
 
-from dht_handler import RustDHTHandler
+from rust_dht_handler import RustDHTHandler
 from did_iiot.modules import Service
 from utils import get_vc
 import asyncio
@@ -94,12 +94,9 @@ class RustIssuerNode(RustDHTHandler):
     def _build_signed_status_list_record(self, sk: bytes) -> bytes:
         raw_doc = utils.encode_did_document(self.status_list_struct)
         alg = b"Dilithium-2\x00"          # 12 bytes, null-padded
-        signature = self._ensure_bytes(
-            self.dilith_key_manager.sign(self._ensure_bytes(sk), bytes(raw_doc))
-        )
+        signature = self.dilith_key_manager.sign(sk, bytes(raw_doc))
         return alg + signature + raw_doc
 
-    # ── DHT operations ────────────────────────────────────────────────────────
 
     async def insert_status_list_into_DHT(self):
         sk = self._load_private_key()
@@ -218,9 +215,9 @@ class RustIssuerNode(RustDHTHandler):
         pub_key = utils.base64_decode_publickey(pub_key_jwk)
 
         is_verified = self.dilith_key_manager.verify_signature(
-            self._ensure_bytes(pub_key),
+            pub_key,
             bytes(msg),
-            self._ensure_bytes(auth_signature),
+            auth_signature,
         )
         if not is_verified:
             print("[IssuerNode] Revoke request: invalid signature")
@@ -239,7 +236,6 @@ class RustIssuerNode(RustDHTHandler):
         return None
 
 
-# ── FastAPI app ───────────────────────────────────────────────────────────────
 
 issuer_node_service = FastAPI()
 issuer_node = RustIssuerNode()
@@ -350,7 +346,6 @@ async def debug_dht():
     return JSONResponse(content=status_list)
 
 
-# ── startup ───────────────────────────────────────────────────────────────────
 
 async def configure_issuer_node(issuer_node: RustIssuerNode, peers):
     await issuer_node.start_dht_service(5000)

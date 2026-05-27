@@ -2,3 +2,4 @@ env/
 test.py
 .env/
 __pycache__/
+.pytest_cache/
